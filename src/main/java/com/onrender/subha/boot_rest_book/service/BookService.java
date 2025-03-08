@@ -1,13 +1,15 @@
 package com.onrender.subha.boot_rest_book.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.onrender.subha.boot_rest_book.dao.BookRepository;
 import com.onrender.subha.boot_rest_book.entity.Book;
 
-@Component
+/* @Component
 public class BookService {
     private static List<Book> books = new ArrayList<>();
 
@@ -50,4 +52,41 @@ public class BookService {
         return null;
     }
 
+} */
+
+@Component
+public class BookService {
+    @Autowired
+    BookRepository bookRepo;
+
+    public List<Book> getAllBooks() {
+        Iterable<Book> books = bookRepo.findAll();
+        return (List<Book>) books;
+    }
+
+    public Book getBookById(int id) {
+        Optional<Book> book = bookRepo.findById(id);
+        return book.isPresent() ? book.get() : null;
+    }
+
+    public Book addBook(Book book) {
+        return bookRepo.save(book);
+    }
+
+    public void deleteBook(int id) {
+        bookRepo.deleteById(id);
+    }
+
+    public Book updateBook(Book book) {
+        Optional<Book> b = bookRepo.findById(book.getId());
+        if (b.isPresent()) {
+            if (book.getTitle() != null)
+                b.get().setTitle(book.getTitle());
+            if (book.getAuthor() != null)
+                b.get().setAuthor(book.getAuthor());
+            return bookRepo.save(b.get());
+        } else {
+            return null;
+        }
+    }
 }

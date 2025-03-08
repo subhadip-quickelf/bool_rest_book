@@ -51,8 +51,11 @@ public class BookController {
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Book> deleteBook(@PathVariable("id") int id) {
         Book book = bookService.getBookById(id);
-        boolean status = bookService.deleteBook(id);
-        if (status) {
+        // boolean status = bookService.deleteBook(id);
+
+        bookService.deleteBook(id);
+        // if (status) {
+        if (book != null) {
             return ResponseEntity.ok().body(book);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
