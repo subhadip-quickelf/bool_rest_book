@@ -1,10 +1,15 @@
 package com.onrender.subha.boot_rest_book.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity(name = "books")
 public class Book {
@@ -17,21 +22,18 @@ public class Book {
 	@Column(unique = true, nullable = false)
 	private String title;
 
-	@Column(nullable = false)
-	private String author;
+	@JsonManagedReference // JsonManagedReference & JsonBackReference is used to avoid infinite loop for
+							// bidirectional mapping (i.e. Book to Author and Author to Book)
+	@ManyToOne(cascade = CascadeType.ALL) // cascade is used to create the auther when book is created
+	@JoinColumn(name = "author_id", nullable = false)
+	private Author author;
 
 	public Book() {
 	}
 
-	public Book(int id, String title, String author) {
-		this.id = id;
+	public Book(String title, Author author) {
 		this.title = title;
 		this.author = author;
-	}
-
-	@Override
-	public String toString() {
-		return "Book [id=" + id + ", title=" + title + ", author=" + author + "]";
 	}
 
 	public int getId() {
@@ -46,11 +48,16 @@ public class Book {
 		this.title = title;
 	}
 
-	public String getAuthor() {
+	public Author getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(String author) {
+	public void setAuthor(Author author) {
 		this.author = author;
+	}
+
+	@Override
+	public String toString() {
+		return "Book [id=" + id + ", title=" + title + ", author=" + author + "]";
 	}
 }

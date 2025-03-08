@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.onrender.subha.boot_rest_book.dao.AuthorRepository;
 import com.onrender.subha.boot_rest_book.dao.BookRepository;
+import com.onrender.subha.boot_rest_book.entity.Author;
 import com.onrender.subha.boot_rest_book.entity.Book;
 
 /* @Component
@@ -59,6 +61,9 @@ public class BookService {
     @Autowired
     BookRepository bookRepo;
 
+    @Autowired
+    AuthorRepository authorRepo;
+
     public List<Book> getAllBooks() {
         Iterable<Book> books = bookRepo.findAll();
         return (List<Book>) books;
@@ -70,6 +75,10 @@ public class BookService {
     }
 
     public Book addBook(Book book) {
+        Optional<Author> aOpt = authorRepo.findById(book.getAuthor().getId());
+        if (aOpt.isPresent()) {
+            book.setAuthor(aOpt.get());
+        }
         return bookRepo.save(book);
     }
 
@@ -82,8 +91,13 @@ public class BookService {
         if (b.isPresent()) {
             if (book.getTitle() != null)
                 b.get().setTitle(book.getTitle());
-            if (book.getAuthor() != null)
+            if (book.getAuthor() != null) {
+                Optional<Author> aOpt = authorRepo.findById(book.getAuthor().getId());
+                if (aOpt.isPresent()) {
+                    book.setAuthor(aOpt.get());
+                }
                 b.get().setAuthor(book.getAuthor());
+            }
             return bookRepo.save(b.get());
         } else {
             return null;
