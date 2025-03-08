@@ -32,8 +32,8 @@ public class BookService {
         books.add(book);
     }
 
-    public void deleteBook(int id) {
-        books.removeIf(e -> e.getId() == id);
+    public boolean deleteBook(int id) {
+        return books.removeIf(e -> e.getId() == id);
     }
 
     public Book updateBook(Book book) {
