@@ -28,4 +28,26 @@ public class BookService {
         return books.stream().filter(b -> b.getId() == id).findFirst().orElse(null);
     }
 
+    public void addBook(Book book) {
+        books.add(book);
+    }
+
+    public void deleteBook(int id) {
+        books.removeIf(e -> e.getId() == id);
+    }
+
+    public Book updateBook(Book book) {
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).getId() == book.getId()) {
+                // books.set(i, book);
+                if (book.getTitle() != null)
+                    books.get(i).setTitle(book.getTitle());
+                if (book.getAuthor() != null)
+                    books.get(i).setAuthor(book.getAuthor());
+                return books.get(i);
+            }
+        }
+        return null;
+    }
+
 }
