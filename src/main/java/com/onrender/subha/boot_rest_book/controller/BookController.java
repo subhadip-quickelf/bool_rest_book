@@ -3,6 +3,7 @@ package com.onrender.subha.boot_rest_book.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,55 +21,59 @@ import com.onrender.subha.boot_rest_book.service.BookService;
 @RestController
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+	@Autowired
+	private BookService bookService;
 
-    @GetMapping("/books")
-    public ResponseEntity<List<Book>> getBooks() {
-        List<Book> books = bookService.getAllBooks();
-        if (books.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.status(200).body(books);
-        }
-    }
+	@GetMapping("/books")
+	public ResponseEntity<List<Book>> getBooks() {
+		List<Book> books = bookService.getAllBooks();
+		if (books.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		} else {
+			return ResponseEntity.status(200).body(books);
+		}
+	}
 
-    @GetMapping("/books/{id}")
-    public ResponseEntity<Book> getBook(@PathVariable("id") int id) {
-        Book book = bookService.getBookById(id);
-        if (book == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
-        }
-        return ResponseEntity.ok().body(book);
-    }
+	@GetMapping("/books/{id}")
+	public ResponseEntity<Book> getBook(@PathVariable int id) {
+		Book book = bookService.getBookById(id);
+		if (book == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
+		}
+		return ResponseEntity.ok().body(book);
+	}
 
-    @PostMapping("/books")
-    public Book addBook(@RequestBody Book book) {
-        bookService.addBook(book);
-        return book;
-    }
+	@PostMapping("/books")
+	public Book addBook(@RequestBody Book book) {
+		try {
+			bookService.addBook(book);
+		} catch (DataIntegrityViolationException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		return book;
+	}
 
-    @DeleteMapping("/books/{id}")
-    public ResponseEntity<Book> deleteBook(@PathVariable("id") int id) {
-        Book book = bookService.getBookById(id);
-        // boolean status = bookService.deleteBook(id);
+	@DeleteMapping("/books/{id}")
+	public ResponseEntity<Book> deleteBook(@PathVariable int id) {
+		Book book = bookService.getBookById(id);
+		// boolean status = bookService.deleteBook(id);
 
-        bookService.deleteBook(id);
-        // if (status) {
-        if (book != null) {
-            return ResponseEntity.ok().body(book);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
-        }
-    }
+		bookService.deleteBook(id);
+		// if (status) {
+		if (book != null) {
+			return ResponseEntity.ok().body(book);
+		} else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
+		}
+	}
 
-    @PutMapping("/books")
-    public ResponseEntity<Book> updateBook(@RequestBody Book book) {
-        Book b = bookService.updateBook(book);
-        if (b == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
-        }
-        return ResponseEntity.ok().body(b);
-    }
+	@PutMapping("/books")
+	public ResponseEntity<Book> updateBook(@RequestBody Book book) {
+		Book b = bookService.updateBook(book);
+		if (b == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
+		}
+		return ResponseEntity.ok().body(b);
+	}
 
 }

@@ -9,44 +9,48 @@ import jakarta.persistence.Id;
 @Entity(name = "books")
 public class Book {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "book_id")
-    private int id;
-    private String title;
-    private String author;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "book_id")
+	private int id;
 
-    public Book() {
-    }
+	@Column(unique = true, nullable = false)
+	private String title;
 
-    public Book(int id, String title, String author) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-    }
+	@Column(nullable = false)
+	private String author;
 
-    @Override
-    public String toString() {
-        return "Book [id=" + id + ", title=" + title + ", author=" + author + "]";
-    }
+	public Book() {
+	}
 
-    public int getId() {
-        return id;
-    }
+	public Book(int id, String title, String author) {
+		this.id = id;
+		this.title = title;
+		this.author = author;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	@Override
+	public String toString() {
+		return "Book [id=" + id + ", title=" + title + ", author=" + author + "]";
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getAuthor() {
-        return author;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
 }
